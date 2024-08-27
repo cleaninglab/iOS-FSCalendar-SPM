@@ -16,6 +16,8 @@ typedef NS_ENUM(NSUInteger, FSCalendarMonthPosition);
 
 #pragma mark - Public properties
 
+@property (weak, nonatomic) UIView *topLine;
+
 /**
  The day text label of the cell
  */
@@ -84,11 +86,11 @@ typedef NS_ENUM(NSUInteger, FSCalendarMonthPosition);
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_REQUIRES_SUPER;
 
 // For DIY overridden
-- (void)layoutSubviews NS_REQUIRES_SUPER; // Configure frames of subviews
 - (void)configureAppearance NS_REQUIRES_SUPER; // Configure appearance for cell
 
 - (UIColor *)colorForCurrentStateInDictionary:(NSDictionary *)dictionary;
 - (void)performSelecting;
+- (void)commonInit;
 
 @end
 

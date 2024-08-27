@@ -1381,7 +1381,18 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     NSDate *date = [self.calculator dateForIndexPath:indexPath];
     cell.image = [self.dataSourceProxy calendar:self imageForDate:date];
     cell.numberOfEvents = [self.dataSourceProxy calendar:self numberOfEventsForDate:date];
-    cell.titleLabel.text = [self.dataSourceProxy calendar:self titleForDate:date] ?: @([self.gregorian component:NSCalendarUnitDay fromDate:date]).stringValue;
+
+    NSString *titleText;
+    if ([self.gregorian isDateInToday:date]) {
+        titleText = @"오늘";
+    } else {
+        titleText = [self.dataSourceProxy calendar:self titleForDate:date] ?: @([self.gregorian component:NSCalendarUnitDay fromDate:date]).stringValue;
+    }
+
+    if (cell.titleLabel.text != titleText) {
+        cell.titleLabel.text = titleText;
+    }
+    
     cell.subtitle  = [self.dataSourceProxy calendar:self subtitleForDate:date];
     cell.selected = [_selectedDates containsObject:date];
     cell.dateIsToday = self.today?[self.gregorian isDate:date inSameDayAsDate:self.today]:NO;

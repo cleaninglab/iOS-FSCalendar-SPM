@@ -218,7 +218,7 @@
 - (NSInteger)numberOfRowsInMonth:(NSDate *)month
 {
     if (!month) return 0;
-    if (self.calendar.placeholderType == FSCalendarPlaceholderTypeFillSixRows) return 6;
+    if (self.calendar.placeholderType == FSCalendarPlaceholderTypeFillSixRows || self.calendar.placeholderType == FSCalendarPlaceholderTypeFillHeadTail) return 6;
     
     NSNumber *rowCount = self.rowCounts[month];
     if (rowCount == nil) {

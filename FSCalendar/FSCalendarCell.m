@@ -55,6 +55,7 @@
     label = [[UILabel alloc] initWithFrame:CGRectZero];
     label.textAlignment = NSTextAlignmentCenter;
     label.textColor = [UIColor blackColor];
+    label.font = [UIFont systemFontOfSize: 15 weight: UIFontWeightRegular];
     [self.contentView addSubview:label];
     self.titleLabel = label;
     
@@ -88,72 +89,6 @@
     
 }
 
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    if (_subtitle) {
-        _subtitleLabel.text = _subtitle;
-        if (_subtitleLabel.hidden) {
-            _subtitleLabel.hidden = NO;
-        }
-    } else {
-        if (!_subtitleLabel.hidden) {
-            _subtitleLabel.hidden = YES;
-        }
-    }
-    
-    if (_subtitle) {
-        CGFloat titleHeight = self.titleLabel.font.lineHeight;
-        CGFloat subtitleHeight = self.subtitleLabel.font.lineHeight;
-        
-        CGFloat height = titleHeight + subtitleHeight;
-        _titleLabel.frame = CGRectMake(
-                                       self.preferredTitleOffset.x,
-                                       (self.contentView.fs_height*5.0/6.0-height)*0.5+self.preferredTitleOffset.y,
-                                       self.contentView.fs_width,
-                                       titleHeight
-                                       );
-        _subtitleLabel.frame = CGRectMake(
-                                          self.preferredSubtitleOffset.x,
-                                          (_titleLabel.fs_bottom-self.preferredTitleOffset.y) - (_titleLabel.fs_height-_titleLabel.font.pointSize)+self.preferredSubtitleOffset.y,
-                                          self.contentView.fs_width,
-                                          subtitleHeight
-                                          );
-    } else {
-        _titleLabel.frame = CGRectMake(
-                                       self.preferredTitleOffset.x,
-                                       self.preferredTitleOffset.y,
-                                       self.contentView.fs_width,
-                                       floor(self.contentView.fs_height*5.0/6.0)
-                                       );
-    }
-    
-    _imageView.frame = CGRectMake(self.preferredImageOffset.x, self.preferredImageOffset.y, self.contentView.fs_width, self.contentView.fs_height);
-    
-    CGFloat titleHeight = self.bounds.size.height*5.0/6.0;
-    CGFloat diameter = MIN(self.bounds.size.height*5.0/6.0,self.bounds.size.width);
-    diameter = diameter > FSCalendarStandardCellDiameter ? (diameter - (diameter-FSCalendarStandardCellDiameter)*0.5) : diameter;
-    _shapeLayer.frame = CGRectMake((self.bounds.size.width-diameter)/2,
-                                   (titleHeight-diameter)/2,
-                                   diameter,
-                                   diameter);
-    
-    CGPathRef path = [UIBezierPath bezierPathWithRoundedRect:_shapeLayer.bounds
-                                                cornerRadius:CGRectGetWidth(_shapeLayer.bounds)*0.5*self.borderRadius].CGPath;
-    if (!CGPathEqualToPath(_shapeLayer.path,path)) {
-        _shapeLayer.path = path;
-    }
-    
-    CGFloat eventSize = _shapeLayer.frame.size.height/6.0;
-    _eventIndicator.frame = CGRectMake(
-                                       self.preferredEventOffset.x,
-                                       CGRectGetMaxY(_shapeLayer.frame)+eventSize*0.17+self.preferredEventOffset.y,
-                                       self.fs_width,
-                                       eventSize*0.83
-                                      );
-    
-}
-
 - (void)prepareForReuse
 {
     [super prepareForReuse];
@@ -168,21 +103,6 @@
 
 - (void)performSelecting
 {
-    _shapeLayer.opacity = 1;
-        
-    CAAnimationGroup *group = [CAAnimationGroup animation];
-    CABasicAnimation *zoomOut = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
-    zoomOut.fromValue = @0.3;
-    zoomOut.toValue = @1.2;
-    zoomOut.duration = FSCalendarDefaultBounceAnimationDuration/4*3;
-    CABasicAnimation *zoomIn = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
-    zoomIn.fromValue = @1.2;
-    zoomIn.toValue = @1.0;
-    zoomIn.beginTime = FSCalendarDefaultBounceAnimationDuration/4*3;
-    zoomIn.duration = FSCalendarDefaultBounceAnimationDuration/4;
-    group.duration = FSCalendarDefaultBounceAnimationDuration;
-    group.animations = @[zoomOut, zoomIn];
-    [_shapeLayer addAnimation:group forKey:@"bounce"];
     [self configureAppearance];
     
 }
@@ -190,26 +110,7 @@
 #pragma mark - Private
 
 - (void)configureAppearance
-{
-    UIColor *textColor = self.colorForTitleLabel;
-    if (![textColor isEqual:_titleLabel.textColor]) {
-        _titleLabel.textColor = textColor;
-    }
-    UIFont *titleFont = self.calendar.appearance.titleFont;
-    if (![titleFont isEqual:_titleLabel.font]) {
-        _titleLabel.font = titleFont;
-    }
-    if (_subtitle) {
-        textColor = self.colorForSubtitleLabel;
-        if (![textColor isEqual:_subtitleLabel.textColor]) {
-            _subtitleLabel.textColor = textColor;
-        }
-        titleFont = self.calendar.appearance.subtitleFont;
-        if (![titleFont isEqual:_subtitleLabel.font]) {
-            _subtitleLabel.font = titleFont;
-        }
-    }
-    
+{    
     UIColor *borderColor = self.colorForCellBorder;
     UIColor *fillColor = self.colorForCellFill;
     
